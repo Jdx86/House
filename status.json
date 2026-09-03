@@ -1,13 +1,13 @@
 {
-  "bootstrapped": false,
+  "bootstrapped": true,
   "failed_emails": [],
-  "last_run_note": "All five portal domains (idealista.pt, imovirtual.com, remax.pt, era.pt, century21.pt) were denied by this environment's network egress policy (403/connect_rejected on both direct curl and WebFetch) — an organization-level restriction, not a per-site bot block. WebSearch (which does not fetch the destination directly) still returned search-result snippets, but individual listing pages could not be fetched to verify price/location/exclusion keywords, so no listings could be confirmed or recorded this run. bootstrapped left false so that once portal access is restored, the first successful scan is still treated as the silent backfill run rather than emailing a flood of 'new' listings that were simply never reachable before.",
+  "last_run_note": "Backfill run: 35 listings recorded, 0 emails sent (by design).",
   "last_run_portal_status": {
-    "century21": "blocked",
-    "era": "blocked",
-    "idealista": "blocked",
-    "imovirtual": "blocked",
-    "remax": "blocked"
+    "century21": "empty",
+    "era": "ok",
+    "idealista": "ok",
+    "imovirtual": "ok",
+    "remax": "ok"
   },
-  "last_run_utc": "2026-09-03T22:36:55Z"
+  "last_run_utc": "2026-09-03T23:41:47Z"
 }
