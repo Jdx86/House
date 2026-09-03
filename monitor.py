@@ -45,6 +45,10 @@ INACTIVE_KEYWORDS = [
     "página não encontrada", "pagina nao encontrada",
 ]
 
+RESTORATION_KEYWORDS = [
+    "restauro", "restaurar",
+]
+
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/128.0 Safari/537.36")
 
@@ -348,6 +352,8 @@ def verify_candidate(browser, candidate):
         return False, "listing inactive/sold/reserved", None, None
     if contains_any(text, EXCLUSION_KEYWORDS):
         return False, "listing is rented/tenant-occupied", None, None
+    if contains_any(text, RESTORATION_KEYWORDS):
+        return False, "listing needs restoration (restauro/restaurar)", None, None
 
     muni = find_municipality(text)
     if not muni:
