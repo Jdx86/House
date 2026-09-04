@@ -35,6 +35,15 @@
     "title": "Comprar Moradia T1 Porto",
     "url": "https://www.era.pt/imovel/moradia-t1-porto-porto-067260399"
   },
+  "https://www.era.pt/imovel/moradia-t5-espinho-116240164": {
+    "first_detected": "2026-09-04T19:26:11Z",
+    "listing_id": null,
+    "price": 120000,
+    "publication_date": null,
+    "source": "era",
+    "title": "Comprar Moradia T5 Espinho",
+    "url": "https://www.era.pt/imovel/moradia-t5-espinho-116240164"
+  },
   "https://www.idealista.pt/imovel/32328226": {
     "first_detected": "2026-09-04T11:30:04Z",
     "listing_id": null,
