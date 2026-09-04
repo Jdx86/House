@@ -26,6 +26,15 @@
     "title": "Comprar Moradia T1 Porto",
     "url": "https://www.era.pt/imovel/moradia-t1-porto-porto-067260399"
   },
+  "https://www.idealista.pt/imovel/32328226": {
+    "first_detected": "2026-09-04T11:30:04Z",
+    "listing_id": null,
+    "price": 75000,
+    "publication_date": null,
+    "source": "idealista",
+    "title": "Casa ou moradia à venda na Rua Manuel Ribeiro Fraga, 49",
+    "url": "https://www.idealista.pt/imovel/32328226/"
+  },
   "https://www.idealista.pt/imovel/35006089": {
     "first_detected": "2026-09-04T11:28:53Z",
     "listing_id": null,
