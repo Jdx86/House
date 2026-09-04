@@ -53,15 +53,6 @@
     "title": "Moradia independente à venda na Rua Alexandre Herculano, 101",
     "url": "https://www.idealista.pt/imovel/34668597/"
   },
-  "https://www.idealista.pt/imovel/34898384": {
-    "first_detected": "2026-09-04T16:48:14Z",
-    "listing_id": null,
-    "price": 129000,
-    "publication_date": null,
-    "source": "idealista",
-    "title": "Quinta ou casa rústica à venda em Paredes de Viadores e Manhuncelos",
-    "url": "https://www.idealista.pt/imovel/34898384/"
-  },
   "https://www.idealista.pt/imovel/34963444": {
     "first_detected": "2026-09-04T12:01:47Z",
     "listing_id": null,
@@ -116,15 +107,6 @@
     "title": "Moradia independente à venda na Rua Grupo Recreativo Oliveirense, 267",
     "url": "https://www.idealista.pt/imovel/35280311/"
   },
-  "https://www.imovirtual.com/pt/anuncio/apartamento-como-novo-com-varanda-box-jardim-em-abragao-penafiel-ID1iqg2": {
-    "first_detected": "2026-09-04T11:27:34Z",
-    "listing_id": null,
-    "price": 179000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Apartamento como novo com varanda box jardim em Abragão Penafiel",
-    "url": "https://www.imovirtual.com/pt/anuncio/apartamento-como-novo-com-varanda-box-jardim-em-abragao-penafiel-ID1iqg2"
-  },
   "https://www.imovirtual.com/pt/anuncio/casa-modular-t2-ID1iOOE": {
     "first_detected": "2026-09-03T23:37:35Z",
     "listing_id": null,
@@ -151,15 +133,6 @@
     "source": "imovirtual",
     "title": "Casas em ponto elevado: Vistas abertas e panorâmicas em todo o redor",
     "url": "https://www.imovirtual.com/pt/anuncio/casas-em-ponto-elevado-vistas-abertas-e-panoramicas-em-todo-o-redor-ID1iDGZ"
-  },
-  "https://www.imovirtual.com/pt/anuncio/edificio-de-duas-habitacoes-e-terreno-termas-sao-vicente-penafiel-ID1eeKy": {
-    "first_detected": "2026-09-03T23:40:08Z",
-    "listing_id": null,
-    "price": 145000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Edifício de duas habitações e terreno Termas São Vicente Penafiel",
-    "url": "https://www.imovirtual.com/pt/anuncio/edificio-de-duas-habitacoes-e-terreno-termas-sao-vicente-penafiel-ID1eeKy"
   },
   "https://www.imovirtual.com/pt/anuncio/excelente-oportunidade-de-negocio-moradia-t2-com-cave-em-pedroso-ID1iPub": {
     "first_detected": "2026-09-03T23:36:49Z",
@@ -188,15 +161,6 @@
     "title": "JD - Moradia T2 | Rua do Heroísmo – Bonfim, Porto",
     "url": "https://www.imovirtual.com/pt/anuncio/jd-moradia-t2-rua-do-heroismo-bonfim-porto-ID1iMgt"
   },
-  "https://www.imovirtual.com/pt/anuncio/moradia-antiga-em-baiao-ID1iO83": {
-    "first_detected": "2026-09-04T11:25:02Z",
-    "listing_id": null,
-    "price": 95000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Moradia antiga em Baião",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-antiga-em-baiao-ID1iO83"
-  },
   "https://www.imovirtual.com/pt/anuncio/moradia-em-pedra-para-recuperar-com-terreno-vila-cha-do-marao-ID1iL3H": {
     "first_detected": "2026-09-04T11:27:28Z",
     "listing_id": null,
@@ -205,24 +169,6 @@
     "source": "imovirtual",
     "title": "Moradia em Pedra para recuperar com Terreno - Vila Chã do Marão",
     "url": "https://www.imovirtual.com/pt/anuncio/moradia-em-pedra-para-recuperar-com-terreno-vila-cha-do-marao-ID1iL3H"
-  },
-  "https://www.imovirtual.com/pt/anuncio/moradia-em-pedra-para-recuperar-em-amarante-ID1inT8": {
-    "first_detected": "2026-09-03T23:41:25Z",
-    "listing_id": null,
-    "price": 75000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Moradia em Pedra para recuperar em Amarante",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-em-pedra-para-recuperar-em-amarante-ID1inT8"
-  },
-  "https://www.imovirtual.com/pt/anuncio/moradia-em-varzea-abobadela-amarante-ID1iNVl": {
-    "first_detected": "2026-09-03T23:39:09Z",
-    "listing_id": null,
-    "price": 150000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Moradia em Várzea, Abobadela – Amarante",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-em-varzea-abobadela-amarante-ID1iNVl"
   },
   "https://www.imovirtual.com/pt/anuncio/moradia-isolada-c-280m2-de-terreno-em-valadares-ID1iOyZ": {
     "first_detected": "2026-09-03T23:38:01Z",
@@ -250,15 +196,6 @@
     "source": "imovirtual",
     "title": "Moradia Melres",
     "url": "https://www.imovirtual.com/pt/anuncio/moradia-melres-ID1iOHA"
-  },
-  "https://www.imovirtual.com/pt/anuncio/moradia-para-recuperar-com-vista-douro-em-ancede-baiao-ID1iO3u": {
-    "first_detected": "2026-09-03T23:38:59Z",
-    "listing_id": null,
-    "price": 158500,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Moradia para recuperar com vista Douro em Ancede, Baião",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-para-recuperar-com-vista-douro-em-ancede-baiao-ID1iO3u"
   },
   "https://www.imovirtual.com/pt/anuncio/moradia-rustica-em-lousado-ID1iLlC": {
     "first_detected": "2026-09-04T11:26:53Z",
@@ -305,15 +242,6 @@
     "title": "Moradia T1 para venda",
     "url": "https://www.imovirtual.com/pt/anuncio/moradia-t1-para-venda-ID1iLYg"
   },
-  "https://www.imovirtual.com/pt/anuncio/moradia-t1-terrea-em-sao-mamede-de-negrelos-santo-tirso-ID1iMOn": {
-    "first_detected": "2026-09-03T23:40:19Z",
-    "listing_id": null,
-    "price": 109000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Moradia T1 Térrea em São Mamede de Negrelos , Santo Tirso",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-t1-terrea-em-sao-mamede-de-negrelos-santo-tirso-ID1iMOn"
-  },
   "https://www.imovirtual.com/pt/anuncio/moradia-t2-ID1iPET": {
     "first_detected": "2026-09-04T16:46:20Z",
     "listing_id": null,
@@ -350,15 +278,6 @@
     "title": "Moradia T2 em Vila Chã - Valadares - Excelente Oportunidade",
     "url": "https://www.imovirtual.com/pt/anuncio/moradia-t2-em-vila-cha-valadares-excelente-oportunidade-ID1iNZe"
   },
-  "https://www.imovirtual.com/pt/anuncio/moradia-t2-felgueiras-ID1iNMm": {
-    "first_detected": "2026-09-03T23:39:18Z",
-    "listing_id": null,
-    "price": 139500,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "MORADIA T2 - FELGUEIRAS",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-t2-felgueiras-ID1iNMm"
-  },
   "https://www.imovirtual.com/pt/anuncio/moradia-t2-para-venda-ID1iLnY": {
     "first_detected": "2026-09-04T11:26:42Z",
     "listing_id": null,
@@ -376,15 +295,6 @@
     "source": "imovirtual",
     "title": "Moradia T2 para venda",
     "url": "https://www.imovirtual.com/pt/anuncio/moradia-t2-para-venda-ID1iM7V"
-  },
-  "https://www.imovirtual.com/pt/anuncio/moradia-t3-negrelos-santo-tirso-ID1iPrW": {
-    "first_detected": "2026-09-03T23:36:55Z",
-    "listing_id": null,
-    "price": 135000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Moradia T3 | Negrelos - Santo Tirso",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-t3-negrelos-santo-tirso-ID1iPrW"
   },
   "https://www.imovirtual.com/pt/anuncio/moradia-t3-para-venda-ID1iMOD": {
     "first_detected": "2026-09-03T23:40:13Z",
@@ -421,24 +331,6 @@
     "source": "imovirtual",
     "title": "Moradia T3 para venda",
     "url": "https://www.imovirtual.com/pt/anuncio/moradia-t3-para-venda-ID1iOSA"
-  },
-  "https://www.imovirtual.com/pt/anuncio/moradia-t3-venda-em-campelo-e-ovil-baiao-ID1imaY": {
-    "first_detected": "2026-09-03T23:40:36Z",
-    "listing_id": null,
-    "price": 110000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Moradia T3 Venda em Campelo e Ovil,Baião",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-t3-venda-em-campelo-e-ovil-baiao-ID1imaY"
-  },
-  "https://www.imovirtual.com/pt/anuncio/moradia-t4-para-reconstrucao-em-padronelo-amarante-ID1iOuF": {
-    "first_detected": "2026-09-03T23:38:06Z",
-    "listing_id": null,
-    "price": 115000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "MORADIA T4 PARA RECONSTRUÇÃO EM PADRONELO – AMARANTE",
-    "url": "https://www.imovirtual.com/pt/anuncio/moradia-t4-para-reconstrucao-em-padronelo-amarante-ID1iOuF"
   },
   "https://www.imovirtual.com/pt/anuncio/moradia-t5-para-venda-ID1iOhh": {
     "first_detected": "2026-09-04T11:24:51Z",
@@ -485,42 +377,6 @@
     "title": "Oportunidade Única – Casa para Remodelação com Projeto Aprovado!",
     "url": "https://www.imovirtual.com/pt/anuncio/oportunidade-unica-casa-para-remodelacao-com-projeto-aprovado-ID1hyX9"
   },
-  "https://www.imovirtual.com/pt/anuncio/quinta-com-frente-rio-em-santo-isidoro-marco-de-canaveses-ID1iLna": {
-    "first_detected": "2026-09-04T11:26:48Z",
-    "listing_id": null,
-    "price": 125000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Quinta com frente rio em Santo Isidoro, Marco de Canaveses",
-    "url": "https://www.imovirtual.com/pt/anuncio/quinta-com-frente-rio-em-santo-isidoro-marco-de-canaveses-ID1iLna"
-  },
-  "https://www.imovirtual.com/pt/anuncio/quinta-t2-venda-em-paredes-de-viadores-e-manhuncelos-marco-de-canavese-ID1ip9e": {
-    "first_detected": "2026-09-03T23:40:30Z",
-    "listing_id": null,
-    "price": 72500,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Quinta T2 Venda em Paredes de Viadores e Manhuncelos,Marco de Canavese",
-    "url": "https://www.imovirtual.com/pt/anuncio/quinta-t2-venda-em-paredes-de-viadores-e-manhuncelos-marco-de-canavese-ID1ip9e"
-  },
-  "https://www.imovirtual.com/pt/anuncio/quinta-t5-venda-em-campelo-e-ovil-baiao-ID1iLzO": {
-    "first_detected": "2026-09-04T11:26:19Z",
-    "listing_id": null,
-    "price": 165000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Quinta T5 Venda em Campelo e Ovil,Baião",
-    "url": "https://www.imovirtual.com/pt/anuncio/quinta-t5-venda-em-campelo-e-ovil-baiao-ID1iLzO"
-  },
-  "https://www.imovirtual.com/pt/anuncio/quintinha-em-baiao-com-terreno-1400m2-ID1iPTo": {
-    "first_detected": "2026-09-04T16:45:58Z",
-    "listing_id": null,
-    "price": 74999,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Quintinha em Baião com terreno - 1400m2",
-    "url": "https://www.imovirtual.com/pt/anuncio/quintinha-em-baiao-com-terreno-1400m2-ID1iPTo"
-  },
   "https://www.imovirtual.com/pt/anuncio/ruina-com-projeto-aprovado-para-moradia-t3-e-vista-privilegiada-sobre-ID1iqI0": {
     "first_detected": "2026-09-04T11:27:12Z",
     "listing_id": null,
@@ -538,24 +394,6 @@
     "source": "imovirtual",
     "title": "Terreno com projeto aprovado e Pronto a Construir",
     "url": "https://www.imovirtual.com/pt/anuncio/terreno-com-projeto-aprovado-e-pronto-a-construir-ID1iOEe"
-  },
-  "https://www.imovirtual.com/pt/anuncio/venda-de-tres-moradias-gestaco-baiao-ID1g2TL": {
-    "first_detected": "2026-09-03T23:37:41Z",
-    "listing_id": null,
-    "price": 139000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Venda de Três Moradias, Gestaçô Baião",
-    "url": "https://www.imovirtual.com/pt/anuncio/venda-de-tres-moradias-gestaco-baiao-ID1g2TL"
-  },
-  "https://www.imovirtual.com/pt/anuncio/venda-moradia-v3-gove-baiao-ID1iOou": {
-    "first_detected": "2026-09-04T11:24:37Z",
-    "listing_id": null,
-    "price": 160000,
-    "publication_date": null,
-    "source": "imovirtual",
-    "title": "Venda Moradia V3, Gove, Baião",
-    "url": "https://www.imovirtual.com/pt/anuncio/venda-moradia-v3-gove-baiao-ID1iOou"
   },
   "https://www.remax.pt/pt/imoveis/venda-moradia-t1-porto-campanha/123061290-370": {
     "first_detected": "2026-09-04T11:27:50Z",

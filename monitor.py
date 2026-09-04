@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Porto District house-for-sale monitor. Scans 5 portals, dedupes against
-listings_db.json, emails new qualifying listings via Resend. Never fabricates:
-every fact reported comes from content actually fetched this run.
+"""House-for-sale monitor for a fixed list of Porto-region municipalities.
+Scans 5 portals, dedupes against listings_db.json, emails new qualifying
+listings via Resend. Never fabricates: every fact reported comes from
+content actually fetched this run.
 """
 import json
 import os
@@ -20,11 +21,27 @@ STATUS_PATH = "status.json"
 PRICE_MIN = 50000
 PRICE_MAX = 180000
 
-PORTO_MUNICIPALITIES = [
-    "amarante", "baião", "baiao", "felgueiras", "gondomar", "lousada", "maia",
-    "marco de canaveses", "matosinhos", "paços de ferreira", "pacos de ferreira",
-    "paredes", "penafiel", "porto", "póvoa de varzim", "povoa de varzim",
-    "santo tirso", "trofa", "valongo", "vila do conde", "vila nova de gaia",
+# Fixed target list (not the full Porto District - a chosen subset, plus
+# Espinho which is administratively in Aveiro District but part of the
+# Porto metro area). Espinho needs its own per-portal search below since
+# every scanner's main search is scoped to Porto District, which excludes it.
+TARGET_MUNICIPALITIES = [
+    "espinho", "gondomar", "maia", "matosinhos", "porto",
+    "póvoa de varzim", "povoa de varzim", "vila do conde", "valongo",
+    "vila nova de gaia",
+]
+
+# The rest of Porto District, excluded from TARGET_MUNICIPALITIES. "porto" is
+# ambiguous - it's both the target city AND the district name, so it shows up
+# on every Porto-district listing page (breadcrumbs, addresses) regardless of
+# which municipality the property is actually in. If one of these other
+# district municipalities is also mentioned on the page, don't let a bare
+# "porto" mention count - it's almost certainly the district reference, not
+# the city, and the listing belongs to that other (out-of-scope) municipality.
+OTHER_PORTO_DISTRICT_MUNICIPALITIES = [
+    "amarante", "baião", "baiao", "felgueiras", "lousada",
+    "marco de canaveses", "paços de ferreira", "pacos de ferreira",
+    "paredes", "penafiel", "santo tirso", "trofa",
 ]
 
 EXCLUSION_KEYWORDS = [
@@ -87,8 +104,11 @@ def contains_any(text, keywords):
 
 def find_municipality(text):
     t = text.lower()
-    for m in PORTO_MUNICIPALITIES:
+    other_district_hit = any(m in t for m in OTHER_PORTO_DISTRICT_MUNICIPALITIES)
+    for m in TARGET_MUNICIPALITIES:
         if m in t:
+            if m == "porto" and other_district_hit:
+                continue  # "porto" here is almost certainly the district suffix
             return m
     return None
 
@@ -118,48 +138,54 @@ def extract_price_eur(text):
     return Counter(candidates).most_common(1)[0][0]
 
 
+def _scan_imovirtual_area(area_path, status_key, status, candidates):
+    for page_num in (1, 2):
+        url = (
+            f"https://www.imovirtual.com/pt/resultados/comprar/moradia/{area_path}"
+            f"?priceMin={PRICE_MIN}&priceMax={PRICE_MAX}&page={page_num}"
+        )
+        r = requests.get(url, headers={"User-Agent": UA}, timeout=20)
+        if r.status_code != 200:
+            status[status_key] = f"error: HTTP {r.status_code}"
+            return
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.S)
+        if not m:
+            status[status_key] = "error: no __NEXT_DATA__ found"
+            return
+        data = json.loads(m.group(1))
+        items = data["props"]["pageProps"]["data"]["searchAds"]["items"]
+        if not items:
+            return
+        for it in items:
+            if it.get("estate") != "HOUSE":
+                continue
+            price = (it.get("totalPrice") or {}).get("value")
+            if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
+                continue
+            href = it.get("href", "").replace("[lang]", "pt", 1)
+            href = href.lstrip("/").replace("/ad/", "/anuncio/", 1)
+            full_url = "https://www.imovirtual.com/" + href
+            loc = it.get("location", {})
+            council = None
+            for entry in (loc.get("reverseGeocoding", {}) or {}).get("locations", []):
+                if entry.get("locationLevel") == "council":
+                    council = entry.get("name")
+            candidates.append({
+                "url": full_url,
+                "title": it.get("title", ""),
+                "price": price,
+                "source": "imovirtual",
+                "municipality_hint": council,
+                "short_text": it.get("shortDescription", "") or "",
+            })
+
+
 def scan_imovirtual(status):
     candidates = []
     try:
-        for page_num in (1, 2):
-            url = (
-                "https://www.imovirtual.com/pt/resultados/comprar/moradia/porto"
-                f"?priceMin={PRICE_MIN}&priceMax={PRICE_MAX}&page={page_num}"
-            )
-            r = requests.get(url, headers={"User-Agent": UA}, timeout=20)
-            if r.status_code != 200:
-                status["imovirtual"] = f"error: HTTP {r.status_code}"
-                break
-            m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.S)
-            if not m:
-                status["imovirtual"] = "error: no __NEXT_DATA__ found"
-                break
-            data = json.loads(m.group(1))
-            items = data["props"]["pageProps"]["data"]["searchAds"]["items"]
-            if not items:
-                break
-            for it in items:
-                if it.get("estate") != "HOUSE":
-                    continue
-                price = (it.get("totalPrice") or {}).get("value")
-                if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
-                    continue
-                href = it.get("href", "").replace("[lang]", "pt", 1)
-                href = href.lstrip("/").replace("/ad/", "/anuncio/", 1)
-                full_url = "https://www.imovirtual.com/" + href
-                loc = it.get("location", {})
-                council = None
-                for entry in (loc.get("reverseGeocoding", {}) or {}).get("locations", []):
-                    if entry.get("locationLevel") == "council":
-                        council = entry.get("name")
-                candidates.append({
-                    "url": full_url,
-                    "title": it.get("title", ""),
-                    "price": price,
-                    "source": "imovirtual",
-                    "municipality_hint": council,
-                    "short_text": it.get("shortDescription", "") or "",
-                })
+        _scan_imovirtual_area("porto", "imovirtual", status, candidates)
+        if "imovirtual" not in status:
+            _scan_imovirtual_area("aveiro/espinho", "imovirtual_espinho", status, candidates)
         if "imovirtual" not in status:
             status["imovirtual"] = "ok" if candidates else "empty"
     except Exception as e:
@@ -185,29 +211,37 @@ def _scroll_container(page, selector, max_rounds=25, pause_ms=500):
         prev = h
 
 
+def _scan_remax_area(browser, area, candidates):
+    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
+    page.goto(f"https://www.remax.pt/comprar/moradia/{area}", wait_until="networkidle", timeout=30000)
+    page.wait_for_timeout(1500)
+    _scroll_container(page, "div.overflow-y-auto.custom-scrollbar")
+    cards = page.query_selector_all('a[data-id="listing-card-link"]')
+    for card in cards:
+        href = card.get_attribute("href") or ""
+        if not href:
+            continue
+        full_url = "https://www.remax.pt" + href if href.startswith("/") else href
+        text = card.inner_text()
+        price = extract_price_eur(text)
+        if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
+            continue
+        title = text.split("\n")[0] if text else ""
+        candidates.append({
+            "url": full_url, "title": title, "price": price,
+            "source": "remax", "municipality_hint": None, "short_text": text,
+        })
+    page.close()
+
+
 def scan_remax(browser, status):
     candidates = []
     try:
-        page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-        page.goto("https://www.remax.pt/comprar/moradia/porto", wait_until="networkidle", timeout=30000)
-        page.wait_for_timeout(1500)
-        _scroll_container(page, "div.overflow-y-auto.custom-scrollbar")
-        cards = page.query_selector_all('a[data-id="listing-card-link"]')
-        for card in cards:
-            href = card.get_attribute("href") or ""
-            if not href:
-                continue
-            full_url = "https://www.remax.pt" + href if href.startswith("/") else href
-            text = card.inner_text()
-            price = extract_price_eur(text)
-            if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
-                continue
-            title = text.split("\n")[0] if text else ""
-            candidates.append({
-                "url": full_url, "title": title, "price": price,
-                "source": "remax", "municipality_hint": None, "short_text": text,
-            })
-        page.close()
+        _scan_remax_area(browser, "porto", candidates)
+        try:
+            _scan_remax_area(browser, "espinho", candidates)
+        except Exception as e:
+            status["remax_espinho"] = f"error: {e}"
         status["remax"] = "ok" if candidates else "empty"
     except Exception as e:
         status["remax"] = f"error: {e}"
@@ -232,95 +266,119 @@ def _cards_by_link_ancestor(page, link_selector, card_css="div.card"):
     return out
 
 
+def _scan_era_area(browser, area, candidates):
+    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
+    page.goto(f"https://www.era.pt/comprar/moradias/{area}", wait_until="networkidle", timeout=30000)
+    page.wait_for_timeout(1500)
+    for _ in range(10):
+        page.mouse.wheel(0, 3000)
+        page.wait_for_timeout(500)
+    pairs = _cards_by_link_ancestor(page, 'a[href*="/imovel/"]', "div.card")
+    page.close()
+    for href, text in pairs:
+        full_url = href if href.startswith("http") else "https://www.era.pt" + href
+        if "moradia" not in full_url.lower() and "moradia" not in text.lower():
+            continue
+        price = extract_price_eur(text)
+        if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
+            continue
+        title = text.split("\n")[0] if text else ""
+        candidates.append({
+            "url": full_url, "title": title, "price": price,
+            "source": "era", "municipality_hint": None, "short_text": text,
+        })
+
+
 def scan_era(browser, status):
     candidates = []
     try:
-        page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-        page.goto("https://www.era.pt/comprar/moradias/porto", wait_until="networkidle", timeout=30000)
-        page.wait_for_timeout(1500)
-        for _ in range(10):
-            page.mouse.wheel(0, 3000)
-            page.wait_for_timeout(500)
-        pairs = _cards_by_link_ancestor(page, 'a[href*="/imovel/"]', "div.card")
-        page.close()
-        for href, text in pairs:
-            full_url = href if href.startswith("http") else "https://www.era.pt" + href
-            if "moradia" not in full_url.lower() and "moradia" not in text.lower():
-                continue
-            price = extract_price_eur(text)
-            if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
-                continue
-            title = text.split("\n")[0] if text else ""
-            candidates.append({
-                "url": full_url, "title": title, "price": price,
-                "source": "era", "municipality_hint": None, "short_text": text,
-            })
+        _scan_era_area(browser, "porto", candidates)
+        try:
+            _scan_era_area(browser, "espinho", candidates)
+        except Exception as e:
+            status["era_espinho"] = f"error: {e}"
         status["era"] = "ok" if candidates else "empty"
     except Exception as e:
         status["era"] = f"error: {e}"
     return candidates
 
 
+def _scan_century21_url(browser, url, candidates):
+    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
+    page.goto(url, wait_until="networkidle", timeout=30000)
+    page.wait_for_timeout(2000)
+    _scroll_container(page, "div.overflow-y-auto.w-full.flex.flex-col", max_rounds=30, pause_ms=400)
+    pairs = _cards_by_link_ancestor(page, 'a[href^="/comprar/"]', "[class*=card]")
+    page.close()
+    for href, text in pairs:
+        if not re.match(r'^/comprar/[A-Za-z]\d{4}-\d+$', href):
+            continue
+        if "moradia" not in text.lower():
+            continue
+        full_url = "https://www.century21.pt" + href
+        price = extract_price_eur(text)
+        if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
+            continue
+        lines = [l for l in text.split("\n") if l.strip()]
+        title = lines[1] if len(lines) > 1 else (lines[0] if lines else "")
+        candidates.append({
+            "url": full_url, "title": title, "price": price,
+            "source": "century21", "municipality_hint": None, "short_text": text,
+        })
+
+
 def scan_century21(browser, status):
     candidates = []
     try:
-        page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-        page.goto(
+        _scan_century21_url(
+            browser,
             "https://www.century21.pt/comprar?addresses=13&address_names=Porto+-+Distrito",
-            wait_until="networkidle", timeout=30000,
+            candidates,
         )
-        page.wait_for_timeout(2000)
-        _scroll_container(page, "div.overflow-y-auto.w-full.flex.flex-col", max_rounds=30, pause_ms=400)
-        pairs = _cards_by_link_ancestor(page, 'a[href^="/comprar/"]', "[class*=card]")
-        page.close()
-        for href, text in pairs:
-            if not re.match(r'^/comprar/[A-Za-z]\d{4}-\d+$', href):
-                continue
-            if "moradia" not in text.lower():
-                continue
-            full_url = "https://www.century21.pt" + href
-            price = extract_price_eur(text)
-            if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
-                continue
-            lines = [l for l in text.split("\n") if l.strip()]
-            title = lines[1] if len(lines) > 1 else (lines[0] if lines else "")
-            candidates.append({
-                "url": full_url, "title": title, "price": price,
-                "source": "century21", "municipality_hint": None, "short_text": text,
-            })
+        try:
+            _scan_century21_url(browser, "https://www.century21.pt/comprar/moradia/espinho", candidates)
+        except Exception as e:
+            status["century21_espinho"] = f"error: {e}"
         status["century21"] = "ok" if candidates else "empty"
     except Exception as e:
         status["century21"] = f"error: {e}"
     return candidates
 
 
+def _scan_idealista_area(browser, area_path, status_key, status, candidates):
+    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
+    resp = page.goto(
+        f"https://www.idealista.pt/comprar-casas/{area_path}/"
+        f"com-preco-max_{PRICE_MAX},preco-min_{PRICE_MIN},moradias/",
+        wait_until="domcontentloaded", timeout=20000,
+    )
+    if resp is not None and resp.status == 403:
+        status[status_key] = "blocked"
+        page.close()
+        return
+    page.wait_for_timeout(1500)
+    pairs = _cards_by_link_ancestor(page, 'a[href*="/imovel/"]', "article")
+    page.close()
+    for href, text in pairs:
+        full_url = href if href.startswith("http") else "https://www.idealista.pt" + href
+        price = extract_price_eur(text)
+        if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
+            continue
+        title = text.split("\n")[2] if len(text.split("\n")) > 2 else (text.split("\n")[0] if text else "")
+        candidates.append({
+            "url": full_url, "title": title, "price": price, "source": "idealista",
+            "municipality_hint": None, "short_text": text,
+        })
+
+
 def scan_idealista(browser, status):
     candidates = []
     try:
-        page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-        resp = page.goto(
-            f"https://www.idealista.pt/comprar-casas/porto-distrito/"
-            f"com-preco-max_{PRICE_MAX},preco-min_{PRICE_MIN},moradias/",
-            wait_until="domcontentloaded", timeout=20000,
-        )
-        if resp is not None and resp.status == 403:
-            status["idealista"] = "blocked"
-            page.close()
-            return candidates
-        page.wait_for_timeout(1500)
-        pairs = _cards_by_link_ancestor(page, 'a[href*="/imovel/"]', "article")
-        page.close()
-        for href, text in pairs:
-            full_url = href if href.startswith("http") else "https://www.idealista.pt" + href
-            price = extract_price_eur(text)
-            if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
-                continue
-            title = text.split("\n")[2] if len(text.split("\n")) > 2 else (text.split("\n")[0] if text else "")
-            candidates.append({
-                "url": full_url, "title": title, "price": price, "source": "idealista",
-                "municipality_hint": None, "short_text": text,
-            })
-        status["idealista"] = "ok" if candidates else "empty"
+        _scan_idealista_area(browser, "porto-distrito", "idealista", status, candidates)
+        if "idealista" not in status:
+            _scan_idealista_area(browser, "espinho", "idealista_espinho", status, candidates)
+        if "idealista" not in status:
+            status["idealista"] = "ok" if candidates else "empty"
     except Exception as e:
         status["idealista"] = f"error: {e}"
     return candidates
@@ -355,9 +413,18 @@ def verify_candidate(browser, candidate):
     if contains_any(text, RESTORATION_KEYWORDS):
         return False, "listing needs restoration (restauro/restaurar/reabilitação/renovar/renovação)", None, None
 
-    muni = find_municipality(text)
+    hint = (candidate.get("municipality_hint") or "").lower()
+    muni = None
+    if hint:
+        muni = next((m for m in TARGET_MUNICIPALITIES if m in hint), None)
+        if not muni:
+            return False, f"municipality '{hint}' not in target list", None, None
     if not muni:
-        return False, "no Porto District municipality mentioned on page", None, None
+        muni = find_municipality((candidate.get("short_text") or "") + " " + (candidate.get("title") or ""))
+    if not muni:
+        muni = find_municipality(text)
+    if not muni:
+        return False, "no target municipality mentioned on page", None, None
 
     price = extract_price_eur(text) or candidate.get("price")
     if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
@@ -375,7 +442,7 @@ def send_email(listing, status):
     body = (
         f"{listing['title']}\n"
         f"Price: €{listing['price']:,}\n".replace(",", " ") +
-        f"Municipality: {listing.get('municipality', 'Porto District')}\n"
+        f"Municipality: {listing.get('municipality', 'Unknown')}\n"
         f"Source: {listing['source']}\n"
         f"Link: {listing['url']}\n"
         f"Detected: {listing['first_detected']}\n"
@@ -444,7 +511,7 @@ def main():
             if not qualifies:
                 continue
 
-            muni = find_municipality(cand.get("short_text", "") + " " + (title or "")) or "Porto District"
+            muni = find_municipality(cand.get("short_text", "") + " " + (title or "")) or "Unknown"
             entry = {
                 "url": cand["url"],
                 "listing_id": None,
