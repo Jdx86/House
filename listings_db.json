@@ -421,5 +421,14 @@
     "source": "remax",
     "title": "Moradia T1 em Porto com 25 m²",
     "url": "https://www.remax.pt/pt/imoveis/venda-moradia-t1-porto-campanha/123061290-370"
+  },
+  "https://www.remax.pt/pt/imoveis/venda-moradia-t2-espinho-anta-e-guetim/124881063-253": {
+    "first_detected": "2026-09-04T19:25:54Z",
+    "listing_id": null,
+    "price": 150100,
+    "publication_date": null,
+    "source": "remax",
+    "title": "Moradia T2 em Espinho com 1 lugar de garagem",
+    "url": "https://www.remax.pt/pt/imoveis/venda-moradia-t2-espinho-anta-e-guetim/124881063-253"
   }
 }
