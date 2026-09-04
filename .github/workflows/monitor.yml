@@ -5,6 +5,8 @@ on:
     # 08:00-00:00 Europe/Lisbon every 2h (window closes before 1am). GitHub
     # Actions cron is UTC-fixed (no DST auto-adjust) - this is UTC+1 (WEST,
     # Lisbon summer time).
+    # Re-registered 2026-09-04: schedule was not firing on GitHub's cron
+    # scheduler; touching this file forces re-indexing.
     - cron: "0 7,9,11,13,15,17,19,21,23 * * *"
   workflow_dispatch: {}
 
