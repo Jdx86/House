@@ -64,6 +64,14 @@ INACTIVE_KEYWORDS = [
 
 RESTORATION_KEYWORDS = [
     "restauro", "restaurar", "reabilitação", "renovar", "renovação",
+    "reconstrução", "remodelação",
+]
+
+# "divisa" = a fractional/partial share of a property being sold (not the
+# whole house); "investimento" = generic investment-opportunity marketing
+# copy the user wants filtered out regardless of the property itself.
+MISC_EXCLUSION_KEYWORDS = [
+    "divisa", "investimento",
 ]
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -411,7 +419,9 @@ def verify_candidate(browser, candidate):
     if contains_any(text, EXCLUSION_KEYWORDS):
         return False, "listing is rented/tenant-occupied", None, None
     if contains_any(text, RESTORATION_KEYWORDS):
-        return False, "listing needs restoration (restauro/restaurar/reabilitação/renovar/renovação)", None, None
+        return False, "listing needs restoration (restauro/restaurar/reabilitação/renovar/renovação/reconstrução/remodelação)", None, None
+    if contains_any(text, MISC_EXCLUSION_KEYWORDS):
+        return False, "listing matches a misc exclusion keyword (divisa/investimento)", None, None
 
     hint = (candidate.get("municipality_hint") or "").lower()
     muni = None
