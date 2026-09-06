@@ -7,7 +7,7 @@
     "era": "ok",
     "idealista": "ok",
     "imovirtual": "ok",
-    "remax": "ok"
+    "remax": "error: Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://www.remax.pt/comprar/moradia/porto\", waiting until \"networkidle\"\n"
   },
-  "last_run_utc": "2026-09-06T11:38:53Z"
+  "last_run_utc": "2026-09-06T16:06:33Z"
 }
