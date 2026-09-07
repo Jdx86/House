@@ -7,7 +7,8 @@
     "era": "ok",
     "idealista": "ok",
     "imovirtual": "ok",
-    "remax": "ok"
+    "remax": "ok",
+    "remax_espinho": "error: Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://www.remax.pt/comprar/moradia/espinho\", waiting until \"networkidle\"\n"
   },
-  "last_run_utc": "2026-09-07T13:26:17Z"
+  "last_run_utc": "2026-09-07T16:08:47Z"
 }
