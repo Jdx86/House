@@ -5,10 +5,9 @@
   "last_run_portal_status": {
     "century21": "empty",
     "era": "ok",
-    "era_espinho": "error: Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://www.era.pt/comprar/moradias/espinho\", waiting until \"networkidle\"\n",
     "idealista": "ok",
     "imovirtual": "ok",
     "remax": "ok"
   },
-  "last_run_utc": "2026-09-09T15:09:13Z"
+  "last_run_utc": "2026-09-09T17:09:08Z"
 }
