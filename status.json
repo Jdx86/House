@@ -4,10 +4,10 @@
   "last_run_note": "0 new listing(s) emailed this run.",
   "last_run_portal_status": {
     "century21": "empty",
-    "era": "ok",
+    "era": "error: Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://www.era.pt/comprar/moradias/porto\", waiting until \"networkidle\"\n",
     "idealista": "ok",
     "imovirtual": "ok",
     "remax": "ok"
   },
-  "last_run_utc": "2026-09-10T11:08:59Z"
+  "last_run_utc": "2026-09-10T12:12:22Z"
 }
