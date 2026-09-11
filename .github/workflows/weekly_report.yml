@@ -1,0 +1,34 @@
+name: Porto House Monitor - Weekly Verification Report
+
+on:
+  workflow_dispatch: {}
+  # No native `schedule` trigger here on purpose - GitHub's own cron proved
+  # unreliable for this repo (see monitor.yml history). This is fired by an
+  # external cron-job.org job (Fridays 14:00 Europe/Lisbon) hitting the
+  # workflow_dispatch API endpoint, same mechanism as the main monitor.
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Run weekly verification report
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_EMAIL: jorge_hernani@msn.com
+          RESEND_FROM_EMAIL: onboarding@resend.dev
+        run: python weekly_report.py
