@@ -46,7 +46,6 @@ def scan_all_portals():
         per_portal["remax"] = mon.scan_remax(browser, status)
         per_portal["era"] = mon.scan_era(browser, status)
         per_portal["century21"] = mon.scan_century21(browser, status)
-        per_portal["idealista"] = mon.scan_idealista(browser, status)
 
         # Detail-verify a sample from each portal to get exclusion-reason
         # breakdowns without needing to check every single candidate (some
@@ -92,7 +91,7 @@ def check_municipality_coverage(per_portal):
     all portals, before any filtering) mention it anywhere in its available
     text? If a municipality never appears at all, its portal-side search
     for that area may be broken - flag it rather than assume 'no listings
-    exist there this week', which is possible but less likely across 5
+    exist there this week', which is possible but less likely across 4
     portals simultaneously."""
     all_text_by_muni = {m: [] for m in mon.TARGET_MUNICIPALITIES if m not in ("povoa de varzim", "baiao")}
     for portal, candidates in per_portal.items():
@@ -111,7 +110,7 @@ def build_report_text(status, per_portal, reason_breakdown, qualifying_examples,
     lines.append("")
     lines.append("=== Raw candidate counts per portal (before any filtering) ===")
     suspicious_portals = []
-    for portal in ["imovirtual", "remax", "era", "century21", "idealista"]:
+    for portal in ["imovirtual", "remax", "era", "century21"]:
         raw_count = len(per_portal.get(portal, []))
         portal_status = status.get(portal, "unknown")
         flag = ""

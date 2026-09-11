@@ -1,8 +1,11 @@
 # House
 
 Automated monitor for houses ("moradia") for sale in the District of Porto,
-Portugal, priced between €50,000 and €180,000, across Idealista, Imovirtual,
-RE/MAX, ERA, and Century 21.
+Portugal, priced between €50,000 and €180,000, across Imovirtual, RE/MAX,
+ERA, and Century 21.
+
+Idealista was dropped on 2026-09-11: its Cloudflare setup blocks GitHub
+Actions runner IPs, and stealth hardening didn't get past it.
 
 Runs every 2 hours via GitHub Actions (.github/workflows/monitor.yml), which
 executes monitor.py on GitHub's own runners (real internet access, unlike a
@@ -29,7 +32,7 @@ Claude cloud sandbox).
   the second run onward get emailed.
 - Century 21 coverage is partial: its search results only reliably expose a
   first batch of listings, so it will often report empty even when matching
-  listings exist there. The other four portals have full coverage.
+  listings exist there. The other three portals have full coverage.
 - Record before notify: a new listing is committed/pushed before its email
   is sent, so a failed email never causes a duplicate notification on retry.
 

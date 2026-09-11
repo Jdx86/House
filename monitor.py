@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """House-for-sale monitor for a fixed list of Porto-region municipalities.
-Scans 5 portals, dedupes against listings_db.json, emails new qualifying
+Scans 4 portals, dedupes against listings_db.json, emails new qualifying
 listings via Resend. Never fabricates: every fact reported comes from
 content actually fetched this run.
 """
@@ -84,9 +84,8 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 #
 # The init script + pt-PT locale/headers are a best-effort attempt to look
 # like an ordinary Portuguese browser rather than automation, for portals
-# behind bot protection (idealista). This does NOT defeat IP-reputation
-# blocking - if idealista keeps failing, the fallbacks are its official API
-# or a residential proxy.
+# behind bot protection. This does NOT defeat IP-reputation blocking - a
+# portal whose CDN blocks the runner's IP outright will still fail.
 STEALTH_INIT_SCRIPT = """
 Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
 Object.defineProperty(navigator, 'languages', {get: () => ['pt-PT', 'pt', 'en-US']});
@@ -201,6 +200,9 @@ def extract_price_eur(text):
     return Counter(candidates).most_common(1)[0][0]
 
 
+# idealista.pt was removed 2026-09-11: its Cloudflare setup blocks GitHub
+# Actions runner IPs, and stealth hardening (pt-PT locale, webdriver patch,
+# AutomationControlled off) was tried and failed. Needs a proxy/API to return.
 def _scan_imovirtual_area(area_path, status_key, status, candidates):
     for page_num in (1, 2):
         url = (
@@ -418,47 +420,6 @@ def scan_century21(browser, status):
     return candidates
 
 
-def _scan_idealista_area(browser, area_path, status_key, status, candidates):
-    page = new_stealth_page(browser)
-    resp = goto_with_retry(
-        page,
-        f"https://www.idealista.pt/comprar-casas/{area_path}/"
-        f"com-preco-max_{PRICE_MAX},preco-min_{PRICE_MIN},moradias/",
-        wait_selector='a[href*="/imovel/"]',
-        timeout=25000,
-    )
-    if resp is not None and resp.status == 403:
-        status[status_key] = "blocked"
-        page.close()
-        return
-    page.wait_for_timeout(1500)
-    pairs = _cards_by_link_ancestor(page, 'a[href*="/imovel/"]', "article")
-    page.close()
-    for href, text in pairs:
-        full_url = href if href.startswith("http") else "https://www.idealista.pt" + href
-        price = extract_price_eur(text)
-        if price is None or not (PRICE_MIN <= price <= PRICE_MAX):
-            continue
-        title = text.split("\n")[2] if len(text.split("\n")) > 2 else (text.split("\n")[0] if text else "")
-        candidates.append({
-            "url": full_url, "title": title, "price": price, "source": "idealista",
-            "municipality_hint": None, "short_text": text,
-        })
-
-
-def scan_idealista(browser, status):
-    candidates = []
-    try:
-        _scan_idealista_area(browser, "porto-distrito", "idealista", status, candidates)
-        if "idealista" not in status:
-            _scan_idealista_area(browser, "espinho", "idealista_espinho", status, candidates)
-        if "idealista" not in status:
-            status["idealista"] = "ok" if candidates else "empty"
-    except Exception as e:
-        status["idealista"] = f"error: {e}"
-    return candidates
-
-
 def get_full_text(browser, url):
     page = new_stealth_page(browser)
     try:
@@ -573,7 +534,6 @@ def main():
         all_candidates += scan_remax(browser, portal_status)
         all_candidates += scan_era(browser, portal_status)
         all_candidates += scan_century21(browser, portal_status)
-        all_candidates += scan_idealista(browser, portal_status)
 
         new_count = 0
         checked = 0
