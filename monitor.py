@@ -77,6 +77,61 @@ MISC_EXCLUSION_KEYWORDS = [
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/128.0 Safari/537.36")
 
+# Navigation hardening. `wait_until="networkidle"` waits for 500ms of zero
+# network traffic, which never happens on pages with analytics/chat/polling -
+# it just burns the full timeout and fails. Navigate on "domcontentloaded"
+# instead, then wait for the specific element we actually need.
+#
+# The init script + pt-PT locale/headers are a best-effort attempt to look
+# like an ordinary Portuguese browser rather than automation, for portals
+# behind bot protection (idealista). This does NOT defeat IP-reputation
+# blocking - if idealista keeps failing, the fallbacks are its official API
+# or a residential proxy.
+STEALTH_INIT_SCRIPT = """
+Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+Object.defineProperty(navigator, 'languages', {get: () => ['pt-PT', 'pt', 'en-US']});
+Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]});
+window.chrome = window.chrome || {runtime: {}};
+"""
+
+BROWSER_ARGS = ["--disable-blink-features=AutomationControlled"]
+
+
+def launch_browser(p):
+    return p.chromium.launch(args=BROWSER_ARGS)
+
+
+def new_stealth_page(browser, viewport=None):
+    page = browser.new_page(
+        user_agent=UA,
+        locale="pt-PT",
+        timezone_id="Europe/Lisbon",
+        viewport=viewport or {"width": 1400, "height": 1000},
+        extra_http_headers={"Accept-Language": "pt-PT,pt;q=0.9,en;q=0.8"},
+    )
+    page.add_init_script(STEALTH_INIT_SCRIPT)
+    return page
+
+
+def goto_with_retry(page, url, wait_selector=None, timeout=25000, attempts=2):
+    """Navigate and wait for real content. Returns the response, or raises the
+    last error after all attempts are exhausted."""
+    last_err = None
+    for attempt in range(attempts):
+        try:
+            resp = page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+            if wait_selector:
+                try:
+                    page.wait_for_selector(wait_selector, timeout=10000)
+                except Exception:
+                    pass  # genuinely-absent content is the caller's call to make
+            return resp
+        except Exception as e:
+            last_err = e
+            if attempt + 1 < attempts:
+                page.wait_for_timeout(2000)
+    raise last_err
+
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL", "jorge_hernani@msn.com")
 FROM_EMAIL = os.environ.get("RESEND_FROM_EMAIL", "onboarding@resend.dev")
@@ -220,8 +275,13 @@ def _scroll_container(page, selector, max_rounds=25, pause_ms=500):
 
 
 def _scan_remax_area(browser, area, candidates):
-    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-    page.goto(f"https://www.remax.pt/comprar/moradia/{area}", wait_until="networkidle", timeout=30000)
+    page = new_stealth_page(browser)
+    goto_with_retry(
+        page,
+        f"https://www.remax.pt/comprar/moradia/{area}",
+        wait_selector='a[data-id="listing-card-link"]',
+        timeout=30000,
+    )
     page.wait_for_timeout(1500)
     _scroll_container(page, "div.overflow-y-auto.custom-scrollbar")
     cards = page.query_selector_all('a[data-id="listing-card-link"]')
@@ -275,8 +335,13 @@ def _cards_by_link_ancestor(page, link_selector, card_css="div.card"):
 
 
 def _scan_era_area(browser, area, candidates):
-    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-    page.goto(f"https://www.era.pt/comprar/moradias/{area}", wait_until="networkidle", timeout=30000)
+    page = new_stealth_page(browser)
+    goto_with_retry(
+        page,
+        f"https://www.era.pt/comprar/moradias/{area}",
+        wait_selector="div.card",
+        timeout=30000,
+    )
     page.wait_for_timeout(1500)
     for _ in range(10):
         page.mouse.wheel(0, 3000)
@@ -312,8 +377,8 @@ def scan_era(browser, status):
 
 
 def _scan_century21_url(browser, url, candidates):
-    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-    page.goto(url, wait_until="networkidle", timeout=30000)
+    page = new_stealth_page(browser)
+    goto_with_retry(page, url, wait_selector='a[href^="/comprar/"]', timeout=30000)
     page.wait_for_timeout(2000)
     _scroll_container(page, "div.overflow-y-auto.w-full.flex.flex-col", max_rounds=30, pause_ms=400)
     pairs = _cards_by_link_ancestor(page, 'a[href^="/comprar/"]', "[class*=card]")
@@ -354,11 +419,13 @@ def scan_century21(browser, status):
 
 
 def _scan_idealista_area(browser, area_path, status_key, status, candidates):
-    page = browser.new_page(user_agent=UA, viewport={"width": 1400, "height": 1000})
-    resp = page.goto(
+    page = new_stealth_page(browser)
+    resp = goto_with_retry(
+        page,
         f"https://www.idealista.pt/comprar-casas/{area_path}/"
         f"com-preco-max_{PRICE_MAX},preco-min_{PRICE_MIN},moradias/",
-        wait_until="domcontentloaded", timeout=20000,
+        wait_selector='a[href*="/imovel/"]',
+        timeout=25000,
     )
     if resp is not None and resp.status == 403:
         status[status_key] = "blocked"
@@ -393,9 +460,9 @@ def scan_idealista(browser, status):
 
 
 def get_full_text(browser, url):
-    page = browser.new_page(user_agent=UA)
+    page = new_stealth_page(browser)
     try:
-        resp = page.goto(url, wait_until="networkidle", timeout=25000)
+        resp = goto_with_retry(page, url, wait_selector="h1", timeout=25000)
         if resp is None or resp.status >= 400:
             return None, None
         page.wait_for_timeout(800)
@@ -502,7 +569,7 @@ def main():
     all_candidates += scan_imovirtual(portal_status)
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = launch_browser(p)
         all_candidates += scan_remax(browser, portal_status)
         all_candidates += scan_era(browser, portal_status)
         all_candidates += scan_century21(browser, portal_status)

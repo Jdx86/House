@@ -42,7 +42,7 @@ def scan_all_portals():
     per_portal["imovirtual"] = mon.scan_imovirtual(status)
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = mon.launch_browser(p)
         per_portal["remax"] = mon.scan_remax(browser, status)
         per_portal["era"] = mon.scan_era(browser, status)
         per_portal["century21"] = mon.scan_century21(browser, status)
