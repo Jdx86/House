@@ -5,8 +5,8 @@
   "last_run_portal_status": {
     "century21": "empty",
     "era": "ok",
-    "imovirtual": "error: HTTPSConnectionPool(host='www.imovirtual.com', port=443): Read timed out. (read timeout=20)",
+    "imovirtual": "ok",
     "remax": "ok"
   },
-  "last_run_utc": "2026-09-17T07:05:47Z"
+  "last_run_utc": "2026-09-17T09:04:47Z"
 }
