@@ -1,12 +1,12 @@
 {
   "bootstrapped": true,
   "failed_emails": [],
-  "last_run_note": "0 new listing(s) emailed this run.",
+  "last_run_note": "1 new listing(s) emailed this run.",
   "last_run_portal_status": {
     "century21": "empty",
     "era": "ok",
-    "imovirtual": "ok",
+    "imovirtual": "error: HTTPSConnectionPool(host='www.imovirtual.com', port=443): Read timed out. (read timeout=20)",
     "remax": "ok"
   },
-  "last_run_utc": "2026-09-21T23:54:18Z"
+  "last_run_utc": "2026-09-22T07:02:52Z"
 }
