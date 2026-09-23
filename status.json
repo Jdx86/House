@@ -3,10 +3,10 @@
   "failed_emails": [],
   "last_run_note": "0 new listing(s) emailed this run.",
   "last_run_portal_status": {
-    "century21": "empty",
+    "century21": "ok",
     "era": "ok",
     "imovirtual": "ok",
     "remax": "ok"
   },
-  "last_run_utc": "2026-09-23T17:04:57Z"
+  "last_run_utc": "2026-09-23T17:47:18Z"
 }
