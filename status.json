@@ -3,10 +3,10 @@
   "failed_emails": [],
   "last_run_note": "0 new listing(s) emailed this run.",
   "last_run_portal_status": {
-    "century21": "empty",
+    "century21": "ok",
     "era": "ok",
-    "imovirtual": "error: HTTPSConnectionPool(host='www.imovirtual.com', port=443): Read timed out. (read timeout=20)",
+    "imovirtual": "ok",
     "remax": "ok"
   },
-  "last_run_utc": "2026-09-26T07:06:12Z"
+  "last_run_utc": "2026-09-26T09:04:41Z"
 }
