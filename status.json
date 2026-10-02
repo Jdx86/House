@@ -5,8 +5,8 @@
   "last_run_portal_status": {
     "century21": "empty",
     "era": "ok",
-    "imovirtual": "ok",
+    "imovirtual": "error: HTTP 502",
     "remax": "ok"
   },
-  "last_run_utc": "2026-10-02T00:36:33Z"
+  "last_run_utc": "2026-10-02T07:02:12Z"
 }
