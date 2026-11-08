@@ -1,12 +1,12 @@
 {
   "bootstrapped": true,
   "failed_emails": [],
-  "last_run_note": "1 new listing(s) emailed this run.",
+  "last_run_note": "0 new listing(s) emailed this run.",
   "last_run_portal_status": {
     "century21": "empty",
     "era": "ok",
     "imovirtual": "ok",
     "remax": "empty"
   },
-  "last_run_utc": "2026-11-08T14:09:14Z"
+  "last_run_utc": "2026-11-08T16:04:33Z"
 }
